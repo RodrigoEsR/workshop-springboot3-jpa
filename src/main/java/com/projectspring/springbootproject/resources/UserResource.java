@@ -1,4 +1,4 @@
-package com.projectspring.springbootproject.resouce;
+package com.projectspring.springbootproject.resources;
 
 import com.projectspring.springbootproject.entities.User;
 import com.projectspring.springbootproject.services.UserService;
