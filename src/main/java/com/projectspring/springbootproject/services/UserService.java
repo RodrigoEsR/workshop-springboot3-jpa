@@ -2,8 +2,11 @@ package com.projectspring.springbootproject.services;
 
 import com.projectspring.springbootproject.entities.User;
 import com.projectspring.springbootproject.repositories.UserRepository;
+import com.projectspring.springbootproject.services.exceptions.DatabaseException;
 import com.projectspring.springbootproject.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +17,8 @@ public class UserService {
 
     @Autowired
     private UserRepository repository;
+    @Autowired
+    private UserRepository userRepository;
 
     public List<User> findAll() {
         return repository.findAll();
@@ -29,7 +34,15 @@ public class UserService {
     }
 
     public void delete(Long id) {
-        repository.deleteById(id);
+        try{
+            User user = findById(id);
+            userRepository.delete(user);
+        }
+        catch(EmptyResultDataAccessException e){
+           throw new ResourceNotFoundException(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage());
+        }
     }
 
     public User update(Long id, User obj) {
